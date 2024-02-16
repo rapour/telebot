@@ -263,6 +263,10 @@ type RecipientShared struct {
 	ChatID int64 `json:"chat_id"`
 }
 
+func NewSwitchInlineQuery(inlineQuery string) *string {
+	return &inlineQuery
+}
+
 // InlineButton represents a button displayed in the message.
 type InlineButton struct {
 	// Unique slagish name for this kind of button,
@@ -274,8 +278,8 @@ type InlineButton struct {
 	Text            string  `json:"text"`
 	URL             string  `json:"url,omitempty"`
 	Data            string  `json:"callback_data,omitempty"`
-	InlineQuery     string  `json:"switch_inline_query,omitempty"`
-	InlineQueryChat string  `json:"switch_inline_query_current_chat"`
+	InlineQuery     *string `json:"switch_inline_query,omitempty"`
+	InlineQueryChat *string `json:"switch_inline_query_current_chat,omitempty"`
 	Login           *Login  `json:"login_url,omitempty"`
 	WebApp          *WebApp `json:"web_app,omitempty"`
 }
@@ -327,13 +331,25 @@ func (b Btn) Reply() *ReplyButton {
 }
 
 func (b Btn) Inline() *InlineButton {
+
+	var inlineQuery *string
+	var inlineQueryChat *string
+
+	if b.InlineQuery != "" {
+		inlineQuery = &b.InlineQuery
+	}
+
+	if b.InlineQueryChat != "" {
+		inlineQueryChat = &b.InlineQueryChat
+	}
+
 	return &InlineButton{
 		Unique:          b.Unique,
 		Text:            b.Text,
 		URL:             b.URL,
 		Data:            b.Data,
-		InlineQuery:     b.InlineQuery,
-		InlineQueryChat: b.InlineQueryChat,
+		InlineQuery:     inlineQuery,
+		InlineQueryChat: inlineQueryChat,
 		Login:           b.Login,
 		WebApp:          b.WebApp,
 	}
